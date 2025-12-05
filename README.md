@@ -28,6 +28,10 @@ Typex Pc 项目 css 主题变量跳转插件
 }
 ```
 
+## Debug 
+
+打开 `src/extension.ts` 按 `F5` 开启新 `vscode` 窗口进行调试，修改代码后在新窗口 `command+r` 或者 `ctrl+r` 刷新，即可查看修改后的效果。 
+
 ## Package
 
 修改后运行 `pnpm vscode:package` 生成 `css-var-jump-extension-xxx.vsix`
