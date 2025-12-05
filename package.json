@@ -61,7 +61,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "test": "vscode-test",
-    "vscode:package": "vsce package",
+    "vscode:package": "vsce package --no-dependencies",
     "vscode:publish": "vsce publish",
     "release:major": "pnpm version major && git push origin main --follow-tags",
     "release:minor": "pnpm version minor && git push origin main --follow-tags",
