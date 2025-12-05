@@ -3,17 +3,26 @@
   "displayName": "css-var-jump-extension",
   "description": "css jump for extension",
   "version": "0.0.1",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.96.2"
   },
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:owen-yes/css-var-jump-extension.git"
+  },
   "activationEvents": [
     "onLanguage:css",
     "onLanguage:less",
+    "onLanguage:scss",
+    "onLanguage:sass",
     "onLanguage:typescriptreact",
-    "onLanguage:javascriptreact"
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:javascript"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -23,26 +32,21 @@
         "cssVarJump.searchPaths": {
           "type": "array",
           "default": [
-            "**/theme/**/*.{js,jsx,ts,tsx}"
+            "**/theme/**/*.{js,jsx,ts,tsx}",
+            "**/*.{js,jsx,ts,tsx}"
           ],
           "description": "搜索变量定义的路径模式"
         },
         "cssVarJump.cssSearchPaths": {
           "type": "array",
           "default": [
-            "**/theme/**/*.css",
-            "**/theme/**/*.less"
+            "**/theme/**/*.{css,less,scss,sass}",
+            "**/*.{css,less,scss,sass}"
           ],
           "description": "搜索CSS变量定义的路径模式"
         }
       }
-    },
-    "commands": [
-      {
-        "command": "css-var-jump-extension.typexCssVarJump",
-        "title": "Typex Css Var Jump"
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
@@ -56,18 +60,21 @@
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "vscode:package": "vsce package",
+    "vscode:publish": "vsce publish"
   },
   "devDependencies": {
-    "@types/vscode": "^1.106.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.46.3",
-    "eslint": "^9.39.1",
+    "@types/vscode": "^1.84.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.7.1",
     "esbuild": "^0.27.0",
+    "eslint": "^9.39.1",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.46.3"
   }
 }

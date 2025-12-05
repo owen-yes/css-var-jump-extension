@@ -28,7 +28,9 @@ export class CssVariableDefinitionProvider implements vscode.DefinitionProvider 
     const variableHumpName = cssVarToCamelCase(variableName);
 
     // 获取配置的搜索路径
-    const searchPaths = getSearchPaths("searchPaths", ["**/theme/**/*.{js,jsx,ts,tsx}"]);
+    const searchPaths = [
+      "**/theme/**/*.{js,jsx,ts,tsx}",
+    ];
 
     // 存储所有找到的位置
     const locations: vscode.Location[] = [];

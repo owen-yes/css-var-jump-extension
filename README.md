@@ -8,7 +8,7 @@ Typex Pc 项目 css 主题变量跳转插件
 
 ## Requirements
 
-适用于 vscode 版本 ^1.96.0
+适用于 vscode 版本 ^1.106.1
 
 ## Extension Settings
 
@@ -28,4 +28,6 @@ Typex Pc 项目 css 主题变量跳转插件
 }
 ```
 
-**Enjoy!**
+## Package
+
+修改后运行 `pnpm vscode:package` 生成 `css-var-jump-extension-xxx.vsix`

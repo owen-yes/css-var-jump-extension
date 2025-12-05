@@ -4,7 +4,10 @@ import * as vscode from "vscode";
 /**
  * 获取配置中的搜索路径
  */
-export function getSearchPaths(configKey: string, defaultPaths: string[]): string[] {
+export function getSearchPaths(
+  configKey: string,
+  defaultPaths: string[]
+): string[] {
   const config = vscode.workspace.getConfiguration("cssVarJump");
   return config.get<string[]>(configKey, defaultPaths);
 }
@@ -65,11 +68,9 @@ export async function executeFallbackDefinitionProvider(
   position: vscode.Position
 ): Promise<vscode.Definition | undefined> {
   try {
-    const otherDefinitions = await vscode.commands.executeCommand<vscode.Location[]>(
-      "vscode.executeDefinitionProvider",
-      document.uri,
-      position
-    );
+    const otherDefinitions = await vscode.commands.executeCommand<
+      vscode.Location[]
+    >("vscode.executeDefinitionProvider", document.uri, position);
 
     if (otherDefinitions && otherDefinitions.length > 0) {
       return otherDefinitions;
