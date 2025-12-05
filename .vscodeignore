@@ -1,14 +1,23 @@
-.vscode/**
-.vscode-test/**
-out/**
-node_modules/**
-src/**
-.gitignore
-.yarnrc
+# 忽略测试文件
+src/test/**
+*.test.ts
+
+# 忽略构建相关文件
 esbuild.js
-vsc-extension-quickstart.md
-**/tsconfig.json
-**/eslint.config.mjs
-**/*.map
-**/*.ts
-**/.vscode-test.*
+tsconfig.json
+eslint.config.mjs
+
+# 忽略包管理文件
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 忽略文档（除非你想包含它们）
+*.md
+
+# 忽略配置文件
+.npmrc
+
+# 保留 README.md, CHANGELOG.md, LICENSE 在包中
+!README.md
+!CHANGELOG.md

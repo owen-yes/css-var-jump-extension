@@ -1,8 +1,15 @@
 // src/tsxVariableDefinitionProvider.ts
 import * as vscode from "vscode";
-import { getSearchPaths, isInComment, executeFallbackDefinitionProvider } from "./utils";
+import {
+  getSearchPaths,
+  isInComment,
+  cssVarToCamelCase,
+  executeFallbackDefinitionProvider,
+} from "./utils";
 
-export class TsxVariableDefinitionProvider implements vscode.DefinitionProvider {
+export class TsxVariableDefinitionProvider
+  implements vscode.DefinitionProvider
+{
   async provideDefinition(
     document: vscode.TextDocument,
     position: vscode.Position,
@@ -28,48 +35,62 @@ export class TsxVariableDefinitionProvider implements vscode.DefinitionProvider 
       return undefined;
     }
 
+    // CSS变量转驼峰命名
+    const variableHumpName = cssVarToCamelCase(variableName);
+
     // 获取配置的搜索路径
-    const cssSearchPaths = getSearchPaths("cssSearchPaths", [
-      "**/theme/**/*.css",
-      "**/theme/**/*.less",
-    ]);
+    // const searchPaths = getSearchPaths("searchPaths", [
+    //   "**/theme/**/*.{ts}",
+    // ]);
+    const searchPaths = [
+      "**/theme/**/*.{js,jsx,ts,tsx}",
+    ];
 
     // 存储所有找到的位置
     const locations: vscode.Location[] = [];
 
-    // 遍历每个CSS搜索路径
-    for (const searchPattern of cssSearchPaths) {
-      // 在CSS/LESS文件中搜索变量定义
+    // 遍历每个搜索路径
+    for (const searchPattern of searchPaths) {
       const files = await vscode.workspace.findFiles(
         searchPattern,
         "{**/node_modules/**,**/dist/**,**/build/**}"
       );
 
-      // 扫描CSS/LESS文件寻找变量定义
+      // 扫描JS/TS文件寻找变量定义
       for (const file of files) {
         try {
           const content = await vscode.workspace.fs.readFile(file);
           const text = Buffer.from(content).toString("utf8");
 
-          // 查找CSS变量定义
-          const lines = text.split("\n");
-          for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            // 匹配CSS变量定义，例如: --color-primary:
-            const varRegex = new RegExp(`${variableName}\\s*:`, "g");
-            if (varRegex.test(line)) {
+          // 使用正则表达式查找可能的变量定义（使用驼峰命名）
+          const regexPatterns = [
+            // JavaScript/TypeScript 对象属性形式
+            new RegExp(`['"]${variableHumpName}['"]\\s*[:,]`, "g"),
+            // 模板字符串形式
+            new RegExp(`\`${variableHumpName}\\b`, "g"),
+            // 字符串形式
+            new RegExp(`${variableHumpName}\\b`, "g"),
+          ];
+
+          for (const pattern of regexPatterns) {
+            let match;
+            while ((match = pattern.exec(text)) !== null) {
               if (token.isCancellationRequested) {
                 return undefined;
               }
 
+              // 计算行列位置
+              const lines = text.substring(0, match.index).split("\n");
+              const line = lines.length - 1;
+              const character = lines[lines.length - 1].length;
+
               const definitionUri = vscode.Uri.file(file.fsPath);
-              const definitionPosition = new vscode.Position(
-                i,
-                line.indexOf(variableName)
-              );
+              const definitionPosition = new vscode.Position(line, character);
 
               // 检查是否在注释中
-              const tempDocument = await vscode.workspace.openTextDocument(file);
+              const tempDocument = await vscode.workspace.openTextDocument(
+                file
+              );
               if (!isInComment(tempDocument, definitionPosition)) {
                 locations.push(
                   new vscode.Location(definitionUri, definitionPosition)
