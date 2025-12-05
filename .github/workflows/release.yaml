@@ -14,36 +14,23 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-        # 步骤2: 设置 Node.js 环境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20" # 指定 Node.js 版本
+          node-version: "20"
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: 9
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install
@@ -62,23 +49,11 @@ jobs:
           NAME=$(node -p "require('./package.json').name")
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.version.outputs.VERSION }}
-          release_name: Release ${{ steps.version.outputs.VERSION }}
+          name: Release ${{ steps.version.outputs.VERSION }}
+          files: ./${{ steps.version.outputs.NAME }}-${{ steps.version.outputs.VERSION }}.vsix
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.version.outputs.NAME }}-${{ steps.version.outputs.VERSION }}.vsix
-          asset_name: ${{ steps.version.outputs.NAME }}-${{ steps.version.outputs.VERSION }}.vsix
-          asset_content_type: application/octet-stream
