@@ -62,7 +62,10 @@
     "lint": "eslint src",
     "test": "vscode-test",
     "vscode:package": "vsce package",
-    "vscode:publish": "vsce publish"
+    "vscode:publish": "vsce publish",
+    "release:major": "pnpm version major && git push origin main --follow-tags",
+    "release:minor": "pnpm version minor && git push origin main --follow-tags",
+    "release:patch": "pnpm version patch && git push origin main --follow-tags"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
